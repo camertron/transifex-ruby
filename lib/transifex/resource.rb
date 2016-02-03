@@ -19,9 +19,20 @@ module Transifex
       client.get("/project/#{@project_slug}/resource/#{@slug}/translation/#{lang}/")
     end
 
-    def stats(lang)
-      stats = client.get("/project/#{@project_slug}/resource/#{@slug}/stats/#{lang}")
-      Transifex::Stats.new(stats).tap {|r| r.client = client }
+    def stats(lang = nil)
+      base_url = "/project/#{@project_slug}/resource/#{@slug}/stats/"
+
+      stats = if lang
+        { lang => client.get("#{base_url}#{lang}/") }
+      else
+        client.get(base_url)
+      end
+
+      stats.each_with_object({}) do |(lang, stats), ret|
+        ret[lang] = Transifex::Stats.new(stats).tap do |r|
+          r.client = client
+        end
+      end
     end
   end
 end

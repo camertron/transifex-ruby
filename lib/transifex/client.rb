@@ -22,5 +22,23 @@ module Transifex
         project.client = self
       end
     end
+
+    def resources(project_slug)
+      get("project/#{project_slug}/resources/").map do |resource|
+        Transifex::Resource.new(project_slug, resource).tap do |resource|
+          resource.client = self
+        end
+      end
+    end
+
+    def stats(project_slug, resource_slug)
+      url = "/project/#{project_slug}/resource/#{resource_slug}/stats/"
+
+      get(url).each_with_object({}) do |(lang, stats), ret|
+        ret[lang] = Transifex::Stats.new(stats).tap do |r|
+          r.client = self
+        end
+      end
+    end
   end
 end
