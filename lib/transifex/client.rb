@@ -24,7 +24,7 @@ module Transifex
     end
 
     def resources(project_slug)
-      get("project/#{project_slug}/resources/").map do |resource|
+      get("/project/#{project_slug}/resources/").map do |resource|
         Transifex::Resource.new(project_slug, resource).tap do |resource|
           resource.client = self
         end
@@ -32,7 +32,7 @@ module Transifex
     end
 
     def resource(project_slug, resource_slug)
-      resource = get("project/#{project_slug}/resource/#{resource_slug}")
+      resource = get("/project/#{project_slug}/resource/#{resource_slug}")
       Transifex::Resource.new(project_slug, resource).tap do |resource|
         resource.client = self
       end
